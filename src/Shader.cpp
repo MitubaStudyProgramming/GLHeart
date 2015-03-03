@@ -36,4 +36,36 @@ void Shader::Compile() {
     glCompileShader(mId);
 }
 
+Shader::ShaderType Shader::GetShaderType() const {
+    GLint result;
+    glGetShaderiv(mId, GL_SHADER_TYPE, &result);
+    return (ShaderType)result;
+}
+
+GLboolean Shader::IsShaderDeleted() const {
+    GLint result;
+    glGetShaderiv(mId, GL_DELETE_STATUS, &result);
+    return (GLboolean)result;
+}
+
+GLboolean Shader::IsShaderCompiledSuccessful() const {
+    GLint result;
+    glGetShaderiv(mId, GL_COMPILE_STATUS, &result);
+    return (GLboolean)result;
+}
+
+GLint Shader::GetShaderSourceLength() const {
+    GLint result;
+    glGetShaderiv(mId, GL_SHADER_SOURCE_LENGTH, &result);
+    return result;
+}
+
+std::string Shader::GetInfoLog() const {
+    GLint infoLength;
+    glGetShaderiv(mId, GL_INFO_LOG_LENGTH, &infoLength);
+    std::string infoLog(infoLength+1, '\0');
+    glGetShaderInfoLog(mId, infoLength, NULL, &infoLog[0]);
+    return infoLog;
+}
+
 NS_GLH_END

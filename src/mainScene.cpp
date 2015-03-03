@@ -30,10 +30,18 @@ void MainScene::Init()
     Shader* vert = new Shader(Shader::VERTEX_SHADER);
     vert->SourceFromFile("W:\\GLHeart\\resources\\simple.vert");
     vert->Compile();
+    if (!vert->IsShaderCompiledSuccessful())
+    {
+        cout << vert->GetInfoLog() << endl;
+    }
 
     Shader* frag = new Shader(Shader::FRAGMENT_SHADER);
     frag->SourceFromFile("W:\\GLHeart\\resources\\simple.frag");
     frag->Compile();
+    if (!frag->IsShaderCompiledSuccessful())
+    {
+        cout << frag->GetInfoLog() << endl;
+    }
 
     mProgram = new ShaderProgram();
     mProgram->AttachShader(vert);
