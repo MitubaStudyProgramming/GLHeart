@@ -1,6 +1,5 @@
 #include "Shader.h"
 #include <fstream>
-#include <cstring>
 
 NS_GLH_BEGIN
 
@@ -14,16 +13,16 @@ Shader::~Shader() {
     glDeleteShader(mId);
 }
 
-void Shader::Source(GLsizei count, const GLchar* const *string, const int *length) {
-    glShaderSource(mId, count, string, length);
+void Shader::Source(GLsizei count, const GLchar* const *text, const int *length) {
+    glShaderSource(mId, count, text, length);
 }
 
 void Shader::SourceFromFile(const GLchar *filePath) {
-    string code;
+    std::string code;
     std::ifstream is(filePath, std::ios::in);
     if (is.is_open())
     {
-        string line;
+        std::string line;
         while (std::getline(is, line))
             code += (line + "\n");
         is.close();

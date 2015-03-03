@@ -8,24 +8,24 @@ namespace Misc
         return (ErrorCode)glGetError();
     }
 
-    string GetVendor()
+    std::string GetVendor()
     {
         return (const char*)glGetString(GL_VENDOR);
     }
-    string GetRenderer()
+    std::string GetRenderer()
     {
         return (const char*)glGetString(GL_RENDERER);
     }
-    string GetVersion()
+    std::string GetVersion()
     {
         return (const char*)glGetString(GL_VERSION);
     }
-    string GetShadingLanguageVersion()
+    std::string GetShadingLanguageVersion()
     {
         return (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
     }
 
-    string GetExtensions(GLuint index)
+    std::string GetExtensions(GLuint index)
     {
         return (const char*)glGetStringi(GL_EXTENSIONS, index);
     }

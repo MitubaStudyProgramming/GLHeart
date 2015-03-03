@@ -4,8 +4,6 @@
 
 NS_GLH_BEGIN
 
-class Shader;
-
 class ShaderProgram
 {
 public:
@@ -20,8 +18,11 @@ public:
     void Link();
     void Use();
 
+    ShaderUniform* GetUniform(const GLchar* name);
+
 private:
     GLuint mId;
+    std::map<std::string, ShaderUniform*> mUniforms;
 };
 
 NS_GLH_END

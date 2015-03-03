@@ -1,7 +1,8 @@
 #version 330 core
 
-layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 0) in vec3 Position;
+uniform float gScale;
 
 void main(){
-	   gl_Position.xyz = vertexPosition_modelspace;
+	   gl_Position = vec4(gScale * Position, 1.0);
 }

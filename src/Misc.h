@@ -8,12 +8,12 @@ namespace Misc
 {
     ErrorCode GetError();
 
-    string GetVendor();
-    string GetRenderer();
-    string GetVersion();
-    string GetShadingLanguageVersion();
+    std::string GetVendor();
+    std::string GetRenderer();
+    std::string GetVersion();
+    std::string GetShadingLanguageVersion();
 
-    string GetExtensions(GLuint index);
+    std::string GetExtensions(GLuint index);
 
     void Clear();
 }

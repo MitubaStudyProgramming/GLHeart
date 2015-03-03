@@ -1,9 +1,13 @@
 #include "mainScene.h"
+#include "ShaderUniform.h"
 #include <iostream>
 
 using namespace glh;
 using std::cout;
 using std::endl;
+
+static GLfloat scale = 0.0f;
+ShaderUniform* uniformScale = NULL;
 
 static const GLfloat g_vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f,
@@ -13,10 +17,10 @@ static const GLfloat g_vertex_buffer_data[] = {
 
 void MainScene::Init()
 {
-    string vendor = Misc::GetVendor();
-    string renderer = Misc::GetRenderer();
-    string version = Misc::GetVersion();
-    string shaderversion = Misc::GetShadingLanguageVersion();
+    std::string vendor = Misc::GetVendor();
+    std::string renderer = Misc::GetRenderer();
+    std::string version = Misc::GetVersion();
+    std::string shaderversion = Misc::GetShadingLanguageVersion();
     cout << vendor << endl << renderer << endl << version << endl << shaderversion << endl;
 
     mBuffer = new Buffer();
@@ -37,16 +41,19 @@ void MainScene::Init()
 
     delete vert;
     delete frag;
+
+    uniformScale = mProgram->GetUniform("gScale");
 }
 
 void MainScene::Update() {
-
 }
 
 void MainScene::Draw() {
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
     mProgram->Use();
+    scale += 0.001f;
+    uniformScale->SetValue(sinf(scale));
 
     glEnableVertexAttribArray(0);
 

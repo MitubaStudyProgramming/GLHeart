@@ -1,8 +1,11 @@
 #pragma once
 
 #include <gl/glew.h>
+#include <glm/glm.hpp>
 #include <cstdio>
 #include <string>
+#include <vector>
+#include <map>
 
 #define NS_GLH_BEGIN namespace glh {
 #define NS_GLH_END }
@@ -32,6 +35,9 @@ enum BufferDataUsage
     DYNAMIC_COPY = GL_DYNAMIC_COPY,
 };
 
-typedef std::string string;
+class Buffer;
+class Shader;
+class ShaderProgram;
+class ShaderUniform;
 
 NS_GLH_END

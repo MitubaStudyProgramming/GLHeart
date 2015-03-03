@@ -17,7 +17,7 @@ public:
     Shader(ShaderType type);
     ~Shader();
 
-    void Source(GLsizei count, const GLchar* const* string, const int* length);
+    void Source(GLsizei count, const GLchar* const* text, const int* length);
     void SourceFromFile(const GLchar* filePath);
     void Compile();
 
