@@ -1,13 +1,14 @@
 #include "mainScene.h"
 #include "ShaderUniform.h"
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
 
 using namespace glh;
 using std::cout;
 using std::endl;
 
-static GLfloat scale = 0.0f;
-ShaderUniform* uniformScale = NULL;
+static GLfloat animate = 0.0f;
+ShaderUniform*uniformWorld = NULL;
 
 static const GLfloat g_vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f,
@@ -42,18 +43,24 @@ void MainScene::Init()
     delete vert;
     delete frag;
 
-    uniformScale = mProgram->GetUniform("gScale");
+    uniformWorld = mProgram->GetUniform("gWorld");
 }
 
-void MainScene::Update() {
+void MainScene::Update()
+{
+    animate += 0.001f;
 }
 
 void MainScene::Draw() {
     glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
     mProgram->Use();
-    scale += 0.001f;
-    uniformScale->SetValue(sinf(scale));
+
+    glm::mat4 translate = glm::translate(glm::mat4(), glm::vec3(sinf(animate), 0, 0));
+    glm::mat4 rotate = glm::rotate(glm::mat4(), animate, glm::vec3(0, 0, 1.0f));
+    GLfloat s = sinf(animate * 2) * 0.5f + 0.5f;
+    glm::mat4 scale = glm::scale(glm::mat4(), glm::vec3(s, s, s));
+    uniformWorld->SetValue(translate * rotate * scale);
 
     glEnableVertexAttribArray(0);
 
