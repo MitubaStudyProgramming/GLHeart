@@ -26,7 +26,7 @@ static const GLuint g_index_buffer_data[] = {
 
 void MainScene::Init()
 {
-    glEnable(GL_DEPTH_TEST);
+    RenderStates::Depth::SetEnable(GL_TRUE);
 
     std::string vendor = Misc::GetVendor();
     std::string renderer = Misc::GetRenderer();
@@ -75,7 +75,7 @@ void MainScene::Update()
 }
 
 void MainScene::Draw() {
-    glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
+    Misc::Clear((ClearBit)(CLEAR_COLOR|CLEAR_DEPTH));
 
     mProgram->Use();
 

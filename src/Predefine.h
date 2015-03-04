@@ -36,6 +36,25 @@ enum BufferDataUsage
     DYNAMIC_COPY = GL_DYNAMIC_COPY,
 };
 
+enum ClearBit
+{
+    CLEAR_COLOR = GL_COLOR_BUFFER_BIT,
+    CLEAR_DEPTH = GL_DEPTH_BUFFER_BIT,
+    CLEAR_STENCIL = GL_STENCIL_BUFFER_BIT,
+};
+
+enum DepthFunc
+{
+    DF_NEVER = GL_NEVER,
+    DF_LESS = GL_LESS,
+    DF_EQUAL = GL_EQUAL,
+    DF_LEQUAL = GL_LEQUAL,
+    DF_GREATER = GL_GREATER,
+    DF_NOTEQUAL = GL_NOTEQUAL,
+    DF_GEQUAL = GL_GEQUAL,
+    DF_ALWAYS = GL_ALWAYS,
+};
+
 class Buffer;
 class Shader;
 class ShaderProgram;

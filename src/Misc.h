@@ -15,7 +15,10 @@ namespace Misc
 
     std::string GetExtensions(GLuint index);
 
-    void Clear();
+    void Clear(ClearBit bits);
+    void SetClearColorValue(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
+    void SetClearDepthValue(GLclampd depth);
+    void SetClearStencilValue(GLint s);
 }
 
 NS_GLH_END

@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "Misc.h"
 
 NS_GLH_BEGIN
@@ -30,9 +31,21 @@ namespace Misc
         return (const char*)glGetStringi(GL_EXTENSIONS, index);
     }
 
-    void Clear()
+    void Clear(ClearBit bits)
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear((GLenum)bits);
+    }
+
+    void SetClearColorValue(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha) {
+        glClearColor(red, green, blue, alpha);
+    }
+
+    void SetClearDepthValue(GLclampd depth) {
+        glClearDepth(depth);
+    }
+
+    void SetClearStencilValue(GLint s) {
+        glClearStencil(s);
     }
 }
 
