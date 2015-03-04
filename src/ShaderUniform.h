@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Predefine.h"
 
 NS_GLH_BEGIN

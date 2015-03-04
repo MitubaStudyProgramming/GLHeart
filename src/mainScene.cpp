@@ -1,7 +1,7 @@
 #include "mainScene.h"
-#include "ShaderUniform.h"
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 using namespace glh;
 using std::cout;
@@ -12,8 +12,15 @@ ShaderUniform*uniformWorld = NULL;
 
 static const GLfloat g_vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,
         1.0f, -1.0f, 0.0f,
         0.0f, 1.0f, 0.0f,
+};
+static const GLuint g_index_buffer_data[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2,
 };
 
 void MainScene::Init()
@@ -24,8 +31,11 @@ void MainScene::Init()
     std::string shaderversion = Misc::GetShadingLanguageVersion();
     cout << vendor << endl << renderer << endl << version << endl << shaderversion << endl;
 
-    mBuffer = new Buffer();
-    mBuffer->Data(Buffer::ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, glh::STATIC_DRAW);
+    mVertexBuffer = new Buffer();
+    mVertexBuffer->Data(Buffer::ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, glh::STATIC_DRAW);
+
+    mIndexBuffer = new Buffer();
+    mIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, glh::STATIC_DRAW);
 
     Shader* vert = new Shader(Shader::VERTEX_SHADER);
     vert->SourceFromFile("W:\\GLHeart\\resources\\simple.vert");
@@ -64,17 +74,19 @@ void MainScene::Draw() {
 
     mProgram->Use();
 
-    glm::mat4 translate = glm::translate(glm::mat4(), glm::vec3(sinf(animate), 0, 0));
-    glm::mat4 rotate = glm::rotate(glm::mat4(), animate, glm::vec3(0, 0, 1.0f));
-    GLfloat s = sinf(animate * 2) * 0.5f + 0.5f;
+    glm::mat4 translate = glm::translate(glm::mat4(), glm::vec3(sinf(animate) * 0.2f, 0, 0));
+    glm::mat4 rotate = glm::toMat4(    glm::quat(glm::vec3(animate, animate * 1.5f, animate * 2)));
+    GLfloat s = sinf(animate * 2) * 0.4f + 0.6f;
     glm::mat4 scale = glm::scale(glm::mat4(), glm::vec3(s, s, s));
     uniformWorld->SetValue(translate * rotate * scale);
 
     glEnableVertexAttribArray(0);
 
-    mBuffer->Bind(Buffer::ARRAY_BUFFER);
+    mVertexBuffer->Bind(Buffer::ARRAY_BUFFER);
+    mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    //glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
     glDisableVertexAttribArray(0);
 }

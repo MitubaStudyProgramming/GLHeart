@@ -4,3 +4,4 @@
 #include "Misc.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "ShaderUniform.h"

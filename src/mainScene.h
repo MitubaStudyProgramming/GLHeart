@@ -10,6 +10,7 @@ public:
     void Draw();
 
 private:
-    glh::Buffer* mBuffer;
+    glh::Buffer* mVertexBuffer;
+    glh::Buffer* mIndexBuffer;
     glh::ShaderProgram* mProgram;
 };
