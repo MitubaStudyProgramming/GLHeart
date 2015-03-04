@@ -1,14 +1,15 @@
 #include "mainScene.h"
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 using namespace glh;
 using std::cout;
 using std::endl;
 
 static GLfloat animate = 0.0f;
-ShaderUniform*uniformWorld = NULL;
+ShaderUniform*uWorldMatrix = NULL;
+ShaderUniform* uProjectionMatrix = NULL;
+ShaderUniform* uViewMatrix = NULL;
 
 static const GLfloat g_vertex_buffer_data[] = {
         -1.0f, -1.0f, 0.0f,
@@ -25,6 +26,8 @@ static const GLuint g_index_buffer_data[] = {
 
 void MainScene::Init()
 {
+    glEnable(GL_DEPTH_TEST);
+
     std::string vendor = Misc::GetVendor();
     std::string renderer = Misc::GetRenderer();
     std::string version = Misc::GetVersion();
@@ -61,12 +64,14 @@ void MainScene::Init()
     delete vert;
     delete frag;
 
-    uniformWorld = mProgram->GetUniform("gWorld");
+    uWorldMatrix = mProgram->GetUniform("uWorldMatrix");
+    uProjectionMatrix = mProgram->GetUniform("uProjectionMatrix");
+    uViewMatrix = mProgram->GetUniform("uViewMatrix");
 }
 
 void MainScene::Update()
 {
-    animate += 0.001f;
+    animate += 0.0001f;
 }
 
 void MainScene::Draw() {
@@ -74,11 +79,17 @@ void MainScene::Draw() {
 
     mProgram->Use();
 
+    glm::mat4 projectionMatrix = glm::perspective(30.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
+    uProjectionMatrix->SetValue(projectionMatrix);
+
     glm::mat4 translate = glm::translate(glm::mat4(), glm::vec3(sinf(animate) * 0.2f, 0, 0));
-    glm::mat4 rotate = glm::toMat4(    glm::quat(glm::vec3(animate, animate * 1.5f, animate * 2)));
+    glm::mat4 rotate = glm::toMat4(glm::quat(glm::vec3(animate, animate * 1.5f, animate * 2)));
     GLfloat s = sinf(animate * 2) * 0.4f + 0.6f;
     glm::mat4 scale = glm::scale(glm::mat4(), glm::vec3(s, s, s));
-    uniformWorld->SetValue(translate * rotate * scale);
+    uWorldMatrix->SetValue(translate * rotate * scale);
+
+    glm::mat4 viewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, -2.0f), glm::vec3(), glm::vec3(0.0f, -1.0f, 0.0f));
+    uViewMatrix->SetValue(viewMatrix);
 
     glEnableVertexAttribArray(0);
 

@@ -2,6 +2,7 @@
 
 #include <gl/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -39,5 +40,6 @@ class Buffer;
 class Shader;
 class ShaderProgram;
 class ShaderUniform;
+class Transform;
 
 NS_GLH_END
