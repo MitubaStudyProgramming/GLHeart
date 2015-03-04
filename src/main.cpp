@@ -22,7 +22,7 @@ int main()
 
     glewInit();
 
-    MainScene scene;
+    MainScene scene(window);
     scene.Init();
 
     while( !glfwWindowShouldClose( window ) )
