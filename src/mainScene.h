@@ -17,6 +17,7 @@ private:
     glh::Buffer* mVertexBuffer;
     glh::Buffer* mIndexBuffer;
     glh::ShaderProgram* mProgram;
+    glh::Texture* mTexture;
 
     GLfloat mViewDistance;
     GLfloat mViewAngle;

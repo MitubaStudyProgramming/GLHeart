@@ -59,6 +59,7 @@ class Buffer;
 class Shader;
 class ShaderProgram;
 class ShaderUniform;
+class Texture;
 class Transform;
 
 NS_GLH_END

@@ -12,10 +12,10 @@ ShaderUniform* uProjectionMatrix = NULL;
 ShaderUniform* uViewMatrix = NULL;
 
 static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f, //X
-        0.0f, -1.0f, 1.0f, //B
-        1.0f, -1.0f, 0.0f, //R
-        0.0f, 1.0f, 0.0f, //G
+        -1.0f, -1.0f, 0.0f, /*X*/ 0.0f, 0.0f,
+        0.0f, -1.0f, 1.0f, /*B*/ 0.5f, 0.0f,
+        1.0f, -1.0f, 0.0f, /*R*/ 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f, /*G*/ 0.5f, 1.0f,
 };
 static const GLuint g_index_buffer_data[] = {
         0, 3, 1,
@@ -51,6 +51,9 @@ void MainScene::Init()
     std::string version = Misc::GetVersion();
     std::string shaderversion = Misc::GetShadingLanguageVersion();
     cout << vendor << endl << renderer << endl << version << endl << shaderversion << endl;
+
+    mTexture = new Texture();
+    mTexture->LoadFile("W:\\GLHeart\\resources\\OM.bmp");
 
     mVertexBuffer = new Buffer();
     mVertexBuffer->Data(Buffer::ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, glh::STATIC_DRAW);
@@ -107,8 +110,8 @@ void MainScene::Update()
         }
         mLastMouseX = mouseX;
         mLastMouseY = mouseY;
-        mLastLeftMouseButtonState = leftMouseButtonState;
     }
+    mLastLeftMouseButtonState = leftMouseButtonState;
     if (glfwGetKey(mWindow, GLFW_KEY_MINUS) == GLFW_PRESS)
     {
         mViewDistance -= deltaTime;
@@ -151,12 +154,19 @@ void MainScene::Draw() {
     uViewMatrix->SetValue(mViewMatrix);
 
     glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
 
     mVertexBuffer->Bind(Buffer::ARRAY_BUFFER);
     mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 20, 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, (const GLvoid*)12);
+
+    Texture::Active(Texture::TEXTURE0);
+    mTexture->Bind(Texture::TEXTURE_2D);
+
     //glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
+    glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
 }
