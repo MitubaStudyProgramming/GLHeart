@@ -23,6 +23,7 @@ struct DirectionalLight
 };
 
 static GLfloat animate = 0.0f;
+Mesh* gMesh = NULL;
 
 static Vertex g_vertices[] = {
         Vertex(vec3(-1.0f, -1.0f, 0.0f)/*X*/,  vec2(0.0f, 0.0f), vec3()),
@@ -45,7 +46,7 @@ inline float clamp(float x, float a, float b)
 
 MainScene::MainScene(GLFWwindow *window)
     :mWindow(window)
-    ,mViewDistance(2.0f)
+    ,mViewDistance(5.0f)
     ,mViewAngle(0)
     ,mViewPitch(0)
     ,mLastTime(0)
@@ -58,6 +59,7 @@ MainScene::MainScene(GLFWwindow *window)
 
 void MainScene::Init()
 {
+    Misc::SetClearColorValue(0.0f, 0.5f, 0.5f, 1.0f);
     RenderStates::Depth::SetEnable(GL_TRUE);
 
     std::string vendor = Misc::GetVendor();
@@ -104,8 +106,10 @@ void MainScene::Init()
     mIndexBuffer = new Buffer();
     mIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, glh::STATIC_DRAW);
 
+    gMesh = new Mesh("W:\\GLHeart\\resources\\max.obj");
+
     Shader* vert = new Shader(Shader::VERTEX_SHADER);
-    vert->SourceFromFile("W:\\GLHeart\\resources\\simple.vert");
+    vert->SourceFromFile("W:\\GLHeart\\resources\\phong.vert");
     vert->Compile();
     if (!vert->IsShaderCompiledSuccessful())
     {
@@ -113,7 +117,7 @@ void MainScene::Init()
     }
 
     Shader* frag = new Shader(Shader::FRAGMENT_SHADER);
-    frag->SourceFromFile("W:\\GLHeart\\resources\\simple.frag");
+    frag->SourceFromFile("W:\\GLHeart\\resources\\phong.frag");
     frag->Compile();
     if (!frag->IsShaderCompiledSuccessful())
     {
@@ -181,13 +185,13 @@ void MainScene::Draw() {
 
     mProgram->Use();
 
-    mProgram->GetUniform("Ka")->SetValue(0.2f);
-    mProgram->GetUniform("Kd")->SetValue(0.6f);
-    mProgram->GetUniform("Ks")->SetValue(1.0f);
-    mProgram->GetUniform("Shininess")->SetValue(2.3f);
+    //mProgram->GetUniform("Ka")->SetValue(1.2f);
+    //mProgram->GetUniform("Kd")->SetValue(0.6f);
+    //mProgram->GetUniform("Ks")->SetValue(0.0f);
+    //mProgram->GetUniform("Shininess")->SetValue(2.3f);
 
-    mProgram->GetUniform("uLightPosition")->SetValue(vec3(2.0f, 2.0f, 1.0f));
-    mProgram->GetUniform("uCameraPosition")->SetValue(mCameraPosition);
+    //mProgram->GetUniform("uLightPosition")->SetValue(vec3(2.0f, 2.0f, 1.0f));
+    //mProgram->GetUniform("uCameraPosition")->SetValue(mCameraPosition);
 
     mat4 projectionMatrix = glm::perspective(45.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
     mProgram->GetUniform("uProjectionMatrix")->SetValue(projectionMatrix);
@@ -200,23 +204,24 @@ void MainScene::Draw() {
 
     mProgram->GetUniform("uViewMatrix")->SetValue(mViewMatrix);
 
-    glEnableVertexAttribArray(0);
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-
-    mVertexBuffer->Bind(Buffer::ARRAY_BUFFER);
-    mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)20);
-
     Texture::Active(Texture::TEXTURE0);
     mTexture->Bind(Texture::TEXTURE_2D);
 
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
-
-    glDisableVertexAttribArray(2);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(0);
+//    glEnableVertexAttribArray(0);
+//    glEnableVertexAttribArray(1);
+//    glEnableVertexAttribArray(2);
+//
+//    mVertexBuffer->Bind(Buffer::ARRAY_BUFFER);
+//    mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+//    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
+//    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)20);
+//
+//    //glDrawArrays(GL_TRIANGLES, 0, 3);
+//    glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+//
+//    glDisableVertexAttribArray(2);
+//    glDisableVertexAttribArray(1);
+//   glDisableVertexAttribArray(0);
+   gMesh->Draw();
 }
