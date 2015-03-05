@@ -7,5 +7,6 @@
 #include "Shader.h"
 #include "ShaderProgram.h"
 #include "ShaderUniform.h"
+#include "Technique.h"
 #include "Texture.h"
 #include "Transform.h"

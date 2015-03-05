@@ -6,17 +6,31 @@ using namespace glh;
 using std::cout;
 using std::endl;
 
-static GLfloat animate = 0.0f;
-ShaderUniform*uWorldMatrix = NULL;
-ShaderUniform* uProjectionMatrix = NULL;
-ShaderUniform* uViewMatrix = NULL;
+struct Vertex
+{
+    vec3 Position;
+    vec2 TexCoord;
+    vec3 Normal;
 
-static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f, -1.0f, 0.0f, /*X*/ 0.0f, 0.0f,
-        0.0f, -1.0f, 1.0f, /*B*/ 0.5f, 0.0f,
-        1.0f, -1.0f, 0.0f, /*R*/ 1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, /*G*/ 0.5f, 1.0f,
+    Vertex(const vec3& pos, const vec2& texCoord, const vec3& normal)
+            :Position(pos), TexCoord(texCoord), Normal(normal){}
 };
+
+struct DirectionalLight
+{
+    vec3 Color;
+    float AmbientIntensity;
+};
+
+static GLfloat animate = 0.0f;
+
+static Vertex g_vertices[] = {
+        Vertex(vec3(-1.0f, -1.0f, 0.0f)/*X*/,  vec2(0.0f, 0.0f), vec3()),
+        Vertex(vec3(0.0f, -1.0f, 1.0f)/*B*/,  vec2(0.5f, 0.0f), vec3()),
+        Vertex(vec3(1.0f, -1.0f, 0.0f)/*R*/,  vec2(1.0f, 0.0f), vec3()),
+        Vertex(vec3(0.0f, 1.0f, 0.0f)/*G*/,  vec2(0.5f, 1.0f), vec3()),
+};
+
 static const GLuint g_index_buffer_data[] = {
         0, 3, 1,
         1, 3, 2,
@@ -55,8 +69,37 @@ void MainScene::Init()
     mTexture = new Texture();
     mTexture->LoadFile("W:\\GLHeart\\resources\\OM.bmp");
 
+    {//Calc Normals
+        int IndexCount = 12;
+        int VertexCount = 4;
+        for (int i = 0; i < IndexCount; i += 3) {
+            unsigned int Index0 = g_index_buffer_data[i];
+            unsigned int Index1 = g_index_buffer_data[i + 1];
+            unsigned int Index2 = g_index_buffer_data[i + 2];
+            vec3 v1 = g_vertices[Index1].Position - g_vertices[Index0].Position;
+            vec3 v2 = g_vertices[Index2].Position - g_vertices[Index0].Position;
+            vec3 Normal = glm::normalize(glm::cross(v2, v1));
+
+            g_vertices[Index0].Normal += Normal;
+            g_vertices[Index1].Normal += Normal;
+            g_vertices[Index2].Normal += Normal;
+        }
+
+        for (unsigned int i = 0; i < VertexCount; i++) {
+            g_vertices[i].Normal = glm::normalize(g_vertices[i].Normal);
+        }
+//        vec3 n = g_vertices[0].Normal;
+//        cout << "X " << n.x << " " << n.y << " " << n.z << endl;
+//        n = g_vertices[1].Normal;
+//        cout << "B " << n.x << " " << n.y << " " << n.z << endl;
+//        n = g_vertices[2].Normal;
+//        cout << "R " << n.x << " " << n.y << " " << n.z << endl;
+//        n = g_vertices[3].Normal;
+//        cout << "G " << n.x << " " << n.y << " " << n.z << endl;
+    }
+
     mVertexBuffer = new Buffer();
-    mVertexBuffer->Data(Buffer::ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, glh::STATIC_DRAW);
+    mVertexBuffer->Data(Buffer::ARRAY_BUFFER, sizeof(g_vertices), g_vertices, glh::STATIC_DRAW);
 
     mIndexBuffer = new Buffer();
     mIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, sizeof(g_index_buffer_data), g_index_buffer_data, glh::STATIC_DRAW);
@@ -84,10 +127,6 @@ void MainScene::Init()
 
     delete vert;
     delete frag;
-
-    uWorldMatrix = mProgram->GetUniform("uWorldMatrix");
-    uProjectionMatrix = mProgram->GetUniform("uProjectionMatrix");
-    uViewMatrix = mProgram->GetUniform("uViewMatrix");
 }
 
 void MainScene::Update()
@@ -127,9 +166,10 @@ void MainScene::Update()
     quat q = glm::rotate(quat(), mViewAngle, up);
     vec3 pos_on_xz = q * forward;
     q = glm::rotate(q, mViewPitch, glm::cross(up, pos_on_xz));
-    vec3 eyePos = q * pos_on_xz * mViewDistance;
 
-    mViewMatrix = glm::lookAt(eyePos, vec3(), -up);
+    mCameraPosition = q * pos_on_xz * mViewDistance;
+    mViewMatrix = glm::lookAt(mCameraPosition, vec3(), -up);
+    //mViewMatrix = glm::inverse(glm::lookAt(mCameraPosition, vec3(), up));
 
     /// Update Animation
     animate += 0.1f * deltaTime;
@@ -142,24 +182,34 @@ void MainScene::Draw() {
 
     mProgram->Use();
 
+    mProgram->GetUniform("Ka")->SetValue(0.2f);
+    mProgram->GetUniform("Kd")->SetValue(0.6f);
+    mProgram->GetUniform("Ks")->SetValue(1.0f);
+    mProgram->GetUniform("Shininess")->SetValue(2.3f);
+
+    mProgram->GetUniform("uLightPosition")->SetValue(vec3(2.0f, 2.0f, 1.0f));
+    mProgram->GetUniform("uCameraPosition")->SetValue(mCameraPosition);
+
     mat4 projectionMatrix = glm::perspective(30.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
-    uProjectionMatrix->SetValue(projectionMatrix);
+    mProgram->GetUniform("uProjectionMatrix")->SetValue(projectionMatrix);
 
     mat4 translate = glm::translate(mat4(), vec3(sinf(animate) * 0.2f, 0, 0));
     mat4 rotate = glm::toMat4(quat(vec3(animate, animate * 1.5f, animate * 2)));
-    GLfloat s = 1;//sinf(animate * 2) * 0.4f + 0.6f;
+    GLfloat s = sinf(animate * 2) * 0.4f + 0.6f;
     mat4 scale = glm::scale(mat4(), vec3(s, s, s));
-    uWorldMatrix->SetValue(mat4());//translate * rotate * scale);
+    mProgram->GetUniform("uWorldMatrix")->SetValue(mat4());//translate * rotate * scale);
 
-    uViewMatrix->SetValue(mViewMatrix);
+    mProgram->GetUniform("uViewMatrix")->SetValue(mViewMatrix);
 
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
 
     mVertexBuffer->Bind(Buffer::ARRAY_BUFFER);
     mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 20, 0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, (const GLvoid*)12);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)12);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (const GLvoid*)20);
 
     Texture::Active(Texture::TEXTURE0);
     mTexture->Bind(Texture::TEXTURE_2D);
@@ -167,6 +217,7 @@ void MainScene::Draw() {
     //glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
 
+    glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
 }

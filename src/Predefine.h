@@ -65,6 +65,7 @@ class Buffer;
 class Shader;
 class ShaderProgram;
 class ShaderUniform;
+class Technique;
 class Texture;
 class Transform;
 

@@ -27,4 +27,5 @@ private:
     double mLastMouseY;
     GLint mLastLeftMouseButtonState;
     glh::mat4 mViewMatrix;
+    glh::vec3 mCameraPosition;
 };
