@@ -26,5 +26,5 @@ private:
     double mLastMouseX;
     double mLastMouseY;
     GLint mLastLeftMouseButtonState;
-    glm::mat4 mViewMatrix;
+    glh::mat4 mViewMatrix;
 };

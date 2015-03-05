@@ -12,10 +12,10 @@ private:
 
 public:
     void SetValue(GLfloat value);
-    void SetValue(const glm::vec2& value);
-    void SetValue(const glm::vec3& value);
-    void SetValue(const glm::vec4& value);
-    void SetValue(const glm::mat4& value);
+    void SetValue(const vec2& value);
+    void SetValue(const vec3& value);
+    void SetValue(const vec4& value);
+    void SetValue(const mat4& value);
 
 private:
     GLuint mLocation;

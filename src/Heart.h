@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Buffer.h"
+#include "Math.h"
 #include "Misc.h"
 #include "RenderStates.h"
 #include "Shader.h"

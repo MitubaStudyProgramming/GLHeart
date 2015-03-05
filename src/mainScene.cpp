@@ -122,14 +122,14 @@ void MainScene::Update()
     }
     mViewDistance = clamp(mViewDistance, 0.5f, 10.0f);
 
-    glm::vec3 forward = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::quat q = glm::rotate(glm::quat(), mViewAngle, up);
-    glm::vec3 pos_on_xz = q * forward;
+    vec3 forward = vec3(0.0f, 0.0f, 1.0f);
+    vec3 up = vec3(0.0f, 1.0f, 0.0f);
+    quat q = glm::rotate(quat(), mViewAngle, up);
+    vec3 pos_on_xz = q * forward;
     q = glm::rotate(q, mViewPitch, glm::cross(up, pos_on_xz));
-    glm::vec3 eyePos = q * pos_on_xz * mViewDistance;
+    vec3 eyePos = q * pos_on_xz * mViewDistance;
 
-    mViewMatrix = glm::lookAt(eyePos, glm::vec3(), -up);
+    mViewMatrix = glm::lookAt(eyePos, vec3(), -up);
 
     /// Update Animation
     animate += 0.1f * deltaTime;
@@ -142,14 +142,14 @@ void MainScene::Draw() {
 
     mProgram->Use();
 
-    glm::mat4 projectionMatrix = glm::perspective(30.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
+    mat4 projectionMatrix = glm::perspective(30.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
     uProjectionMatrix->SetValue(projectionMatrix);
 
-    glm::mat4 translate = glm::translate(glm::mat4(), glm::vec3(sinf(animate) * 0.2f, 0, 0));
-    glm::mat4 rotate = glm::toMat4(glm::quat(glm::vec3(animate, animate * 1.5f, animate * 2)));
+    mat4 translate = glm::translate(mat4(), vec3(sinf(animate) * 0.2f, 0, 0));
+    mat4 rotate = glm::toMat4(quat(vec3(animate, animate * 1.5f, animate * 2)));
     GLfloat s = 1;//sinf(animate * 2) * 0.4f + 0.6f;
-    glm::mat4 scale = glm::scale(glm::mat4(), glm::vec3(s, s, s));
-    uWorldMatrix->SetValue(glm::mat4());//translate * rotate * scale);
+    mat4 scale = glm::scale(mat4(), vec3(s, s, s));
+    uWorldMatrix->SetValue(mat4());//translate * rotate * scale);
 
     uViewMatrix->SetValue(mViewMatrix);
 
