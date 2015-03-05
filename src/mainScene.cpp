@@ -168,8 +168,7 @@ void MainScene::Update()
     q = glm::rotate(q, mViewPitch, glm::cross(up, pos_on_xz));
 
     mCameraPosition = q * pos_on_xz * mViewDistance;
-    mViewMatrix = glm::lookAt(mCameraPosition, vec3(), -up);
-    //mViewMatrix = glm::inverse(glm::lookAt(mCameraPosition, vec3(), up));
+    mViewMatrix = glm::lookAt(mCameraPosition, vec3(), up);
 
     /// Update Animation
     animate += 0.1f * deltaTime;
@@ -190,7 +189,7 @@ void MainScene::Draw() {
     mProgram->GetUniform("uLightPosition")->SetValue(vec3(2.0f, 2.0f, 1.0f));
     mProgram->GetUniform("uCameraPosition")->SetValue(mCameraPosition);
 
-    mat4 projectionMatrix = glm::perspective(30.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
+    mat4 projectionMatrix = glm::perspective(45.0f, 1024.0f/768.0f, 0.1f, 1000.0f);
     mProgram->GetUniform("uProjectionMatrix")->SetValue(projectionMatrix);
 
     mat4 translate = glm::translate(mat4(), vec3(sinf(animate) * 0.2f, 0, 0));
