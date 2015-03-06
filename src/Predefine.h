@@ -70,4 +70,9 @@ class Technique;
 class Texture;
 class Transform;
 
+inline float clamp(float x, float a, float b)
+{
+    return x < a ? a : (x > b ? b : x);
+}
+
 NS_GLH_END

@@ -4,38 +4,44 @@
 
 NS_GLH_BEGIN
 
+static inline void _print(const vec3& v)
+{
+    printf("(%f, %f, %f) ", v.x, v.y, v.z);
+}
+
+static inline void _print(const vec2& v)
+{
+    printf("(%f, %f) ", v.x, v.y);
+}
+
 Mesh::Mesh(const char *filePath)
 {
     mPositionBuffer = new Buffer();
     mUVBuffer = new Buffer();
     mNormalBuffer = new Buffer();
-    mPositionIndexBuffer = new Buffer();
-    mUVIndexBuffer = new Buffer();
-    mNormalIndexBuffer = new Buffer();
+    mIndexBuffer = new Buffer();
     Load(filePath);
 }
 
 void Mesh::Draw()
 {
     mPositionBuffer->Bind(Buffer::ARRAY_BUFFER);
-    mPositionIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
     mUVBuffer->Bind(Buffer::ARRAY_BUFFER);
-    mUVIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-//    mNormalBuffer->Bind(Buffer::ARRAY_BUFFER);
-//    mNormalIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-//    glEnableVertexAttribArray(2);
-//    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    mNormalBuffer->Bind(Buffer::ARRAY_BUFFER);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+    mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
 
     glDrawElements(GL_TRIANGLES, mIndexCount, GL_UNSIGNED_INT, 0);
 
-//    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(1);
     glDisableVertexAttribArray(0);
 }
@@ -67,7 +73,7 @@ void Mesh::Load(const char *filePath)
         if( strcmp( lineHeader, "v" ) == 0 )
         {
             glm::vec3 vertex;
-            fscanf( file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z );
+            fscanf( file, "%f %f %f\n", &vertex.z, &vertex.x, &vertex.y );
             temp_vertices.push_back( vertex );
         }
         else if( strcmp( lineHeader, "vt" ) == 0 )
@@ -79,7 +85,7 @@ void Mesh::Load(const char *filePath)
         else if( strcmp( lineHeader, "vn" ) == 0 )
         {
             glm::vec3 normal;
-            fscanf( file, "%f %f %f\n", &normal.x, &normal.y, &normal.z );
+            fscanf( file, "%f %f %f\n", &normal.z, &normal.x, &normal.y );
             temp_normals.push_back( normal );
         }
         else if( strcmp( lineHeader, "f" ) == 0 )
@@ -109,30 +115,56 @@ void Mesh::Load(const char *filePath)
         }
     }
 
-    mPositionBuffer->Bind(Buffer::ARRAY_BUFFER);
-    mPositionBuffer->Data(Buffer::ARRAY_BUFFER, temp_vertices.size() * sizeof(vec3), &temp_vertices[0], STATIC_DRAW);
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec2> uvs;
+    std::vector<glm::vec3> normals;
+    std::map<GLuint, GLuint> indexLookupTable;
+    std::vector<GLuint> indices;
 
-    mPositionIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-    mPositionIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, vertexIndices.size() * sizeof(unsigned int), &vertexIndices[0], STATIC_DRAW);
+    for(GLuint i=0; i<vertexIndices.size();++i)
+    {
+        GLuint vertexIndex = vertexIndices[i];
+        GLuint uvIndex = uvIndices[i];
+        GLuint normalIndex = normalIndices[i];
+
+        GLuint finalIndex = 0;
+
+        GLuint lookupIndex = (vertexIndex << 20) + (uvIndex << 10) + (normalIndex << 0);
+        if (indexLookupTable.find(lookupIndex) == indexLookupTable.end())
+        {
+            finalIndex = vertices.size();
+
+            indexLookupTable[lookupIndex] = finalIndex;
+            vertices.push_back(temp_vertices[vertexIndex]);
+            uvs.push_back(temp_uvs[uvIndex]);
+            normals.push_back(temp_normals[normalIndex]);
+
+//            printf("[%3d] ", finalIndex);
+//            _print(temp_vertices[vertexIndex]);
+//            _print(temp_uvs[uvIndex]);
+//            _print(temp_normals[normalIndex]);
+//            printf("\n");
+        }
+        else
+        {
+            finalIndex = indexLookupTable[lookupIndex];
+        }
+        indices.push_back(finalIndex);
+    }
+
+    mIndexCount = indices.size();
+
+    mPositionBuffer->Bind(Buffer::ARRAY_BUFFER);
+    mPositionBuffer->Data(Buffer::ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], STATIC_DRAW);
 
     mUVBuffer->Bind(Buffer::ARRAY_BUFFER);
-    mUVBuffer->Data(Buffer::ARRAY_BUFFER, temp_uvs.size() * sizeof(vec2), &temp_uvs[0], STATIC_DRAW);
-
-    mUVIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-    mUVIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, uvIndices.size() * sizeof(unsigned int), &uvIndices[0], STATIC_DRAW);
-
-//    for (int i = 0; i < uvIndices.size(); ++i) {
-//        vec2 uv = temp_uvs[uvIndices[i]];
-//        printf("(%f, %f)\n", uv.x, uv.y);
-//    }
+    mUVBuffer->Data(Buffer::ARRAY_BUFFER, uvs.size() * sizeof(vec2), &uvs[0], STATIC_DRAW);
 
     mNormalBuffer->Bind(Buffer::ARRAY_BUFFER);
-    mNormalBuffer->Data(Buffer::ARRAY_BUFFER, temp_normals.size() * sizeof(vec3), &temp_normals[0], STATIC_DRAW);
+    mNormalBuffer->Data(Buffer::ARRAY_BUFFER, normals.size() * sizeof(vec3), &normals[0], STATIC_DRAW);
 
-    mNormalIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
-    mNormalIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, normalIndices.size() * sizeof(unsigned int), &normalIndices[0], STATIC_DRAW);
-
-    mIndexCount = vertexIndices.size();
+    mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
+    mIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], STATIC_DRAW);
 
     return;
 }

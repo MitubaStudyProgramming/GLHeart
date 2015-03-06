@@ -27,6 +27,11 @@ void Shader::SourceFromFile(const GLchar *filePath) {
             code += (line + "\n");
         is.close();
     }
+    else
+    {
+        printf("Image could not be opened\n");
+        return;
+    }
 
     const GLchar *pStrCode = code.c_str();
     Source(1, &pStrCode, NULL);

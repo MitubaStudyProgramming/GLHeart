@@ -19,9 +19,7 @@ private:
     Buffer* mPositionBuffer;
     Buffer* mUVBuffer;
     Buffer* mNormalBuffer;
-    Buffer* mPositionIndexBuffer;
-    Buffer* mUVIndexBuffer;
-    Buffer* mNormalIndexBuffer;
+    Buffer* mIndexBuffer;
 };
 
 NS_GLH_END

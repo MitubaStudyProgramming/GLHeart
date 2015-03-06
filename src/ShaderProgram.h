@@ -8,6 +8,7 @@ class ShaderProgram
 {
 public:
     static ShaderProgram* GetUsingProgram();
+    static ShaderProgram* QuickLoad(const char* vertexShaderFilePath, const char* fragmentShaderFilePath);
 public:
     ShaderProgram();
     ~ShaderProgram();
