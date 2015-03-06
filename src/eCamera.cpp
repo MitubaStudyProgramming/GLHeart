@@ -4,6 +4,12 @@
 using namespace glh;
 
 static eCamera* gCurrentCamera = NULL;
+static double gScrollOffset = 0;
+
+static void _onGLFWScroll(GLFWwindow *w, double xoffset, double yoffset)
+{
+    gScrollOffset += yoffset;
+}
 
 eCamera* eCamera::GetCurrentCamera()
 {
@@ -28,11 +34,12 @@ eCamera::eCamera(GLFWwindow *w)
     ,mLastMouseY(0)
     ,mLastLeftMouseButtonState(GLFW_RELEASE)
 {
-
+    glfwSetScrollCallback(mWindow, _onGLFWScroll);
 }
 
 void eCamera::Update(double deltaTime)
 {
+    // rotate
     GLint leftMouseButtonState = glfwGetMouseButton(mWindow, GLFW_MOUSE_BUTTON_LEFT);
     if (leftMouseButtonState == GLFW_PRESS)
     {
@@ -50,16 +57,13 @@ void eCamera::Update(double deltaTime)
         mLastMouseY = mouseY;
     }
     mLastLeftMouseButtonState = leftMouseButtonState;
-    if (glfwGetKey(mWindow, GLFW_KEY_MINUS) == GLFW_PRESS)
-    {
-        mViewDistance -= deltaTime;
-    }
-    if (glfwGetKey(mWindow, GLFW_KEY_EQUAL) == GLFW_PRESS)
-    {
-        mViewDistance += deltaTime;
-    }
-    mViewDistance = clamp(mViewDistance, 0.5f, 10.0f);
 
+    // scale
+    mViewDistance -= gScrollOffset;
+    gScrollOffset = 0;
+    mViewDistance = clamp(mViewDistance, 0.5f, 50.0f);
+
+    // calc
     vec3 forward = vec3(0.0f, 0.0f, 1.0f);
     vec3 up = vec3(0.0f, 1.0f, 0.0f);
     quat q = glm::rotate(quat(), mViewAngle, up);
