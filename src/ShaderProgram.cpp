@@ -2,6 +2,11 @@
 #include "Shader.h"
 #include "ShaderUniform.h"
 
+#include <iostream>
+
+using std::cout;
+using std::endl;
+
 NS_GLH_BEGIN
 
 static ShaderProgram* g_UsingProgram = NULL;
@@ -9,6 +14,35 @@ static ShaderProgram* g_UsingProgram = NULL;
 ShaderProgram* ShaderProgram::GetUsingProgram()
 {
     return g_UsingProgram;
+}
+
+ShaderProgram* ShaderProgram::QuickLoad(const char* vertexShaderFilePath, const char* fragmentShaderFilePath)
+{
+
+    Shader vert(Shader::VERTEX_SHADER);
+    vert.SourceFromFile(vertexShaderFilePath);
+    vert.Compile();
+    if (!vert.IsShaderCompiledSuccessful())
+    {
+        cout << vert.GetInfoLog() << endl;
+        return NULL;
+    }
+
+    Shader frag(Shader::FRAGMENT_SHADER);
+    frag.SourceFromFile(fragmentShaderFilePath);
+    frag.Compile();
+    if (!frag.IsShaderCompiledSuccessful())
+    {
+        cout << frag.GetInfoLog() << endl;
+        return NULL;
+    }
+
+    ShaderProgram* program = new ShaderProgram();
+    program->AttachShader(&vert);
+    program->AttachShader(&frag);
+    program->Link();
+
+    return program;
 }
 
 ShaderProgram::ShaderProgram()

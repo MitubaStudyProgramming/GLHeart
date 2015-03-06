@@ -3,6 +3,9 @@
 #include "Heart.h"
 #include <GLFW/glfw3.h>
 
+class eCamera;
+class ePointLight;
+
 class MainScene
 {
 public:
@@ -19,13 +22,7 @@ private:
     glh::ShaderProgram* mProgram;
     glh::Texture* mTexture;
 
-    GLfloat mViewDistance;
-    GLfloat mViewAngle;
-    GLfloat mViewPitch;
     double mLastTime;
-    double mLastMouseX;
-    double mLastMouseY;
-    GLint mLastLeftMouseButtonState;
-    glh::mat4 mViewMatrix;
-    glh::vec3 mCameraPosition;
+    eCamera* mCamera;
+    ePointLight* mPointLight;
 };
