@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Heart.h"
-#include <GLFW/glfw3.h>
+#include "ePredefine.h"
 
 class ePointLight
 {

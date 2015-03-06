@@ -17,12 +17,7 @@ public:
 
 private:
     GLFWwindow* mWindow;
-    glh::Buffer* mVertexBuffer;
-    glh::Buffer* mIndexBuffer;
-    glh::ShaderProgram* mProgram;
-    glh::Texture* mTexture;
 
-    double mLastTime;
     eCamera* mCamera;
     ePointLight* mPointLight;
 };

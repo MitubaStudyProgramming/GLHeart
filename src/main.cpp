@@ -5,6 +5,8 @@
 
 using namespace std;
 
+GLFWwindow* gWindow = NULL;
+
 int main()
 {
     if( glfwInit() == -1 )
@@ -16,7 +18,9 @@ int main()
     if(window == NULL)
     {
         glfwTerminate();
+        return -1;
     }
+    gWindow = window;
 
     glfwMakeContextCurrent(window);
 
