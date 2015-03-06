@@ -44,14 +44,19 @@ eMaterialValueFloatSlider::eMaterialValueFloatSlider(GLfloat initialValue, GLflo
 }
 void eMaterialValueFloatSlider::UpdateUniform(glh::ShaderUniform *uniform)
 {
+    bool changed = false;
     if (glfwGetKey(gWindow, mDecreaseKey) == GLFW_PRESS)
     {
+        changed = true;
         mValue -= mSpeed * eTime::GetDeltaTime();
     }
     if (glfwGetKey(gWindow, mIncreaseKey) == GLFW_PRESS)
     {
+        changed = true;
         mValue += mSpeed * eTime::GetDeltaTime();
     }
+    if (changed)
+        printf("Float Value Changed: %f\n", mValue);
     mValue = glh::clamp(mValue, mMin, mMax);
     uniform->SetValue(mValue);
 }

@@ -15,6 +15,6 @@ out vec3 vVertexPositionW;
 void main(){
 	   gl_Position = uProjectionMatrix * uViewMatrix * uWorldMatrix * vec4(aPosition, 1.0);
 	   vTexCoord0 = aTexCoord.xy;
-	   vNormalW = (uWorldMatrix * vec4(aNormal, 0.0)).xyz;
+	   vNormalW = normalize(uWorldMatrix * vec4(aNormal, 0.0)).xyz;
 	   vVertexPositionW = (uWorldMatrix * vec4(aPosition, 1.0)).xyz;
 }

@@ -13,7 +13,7 @@ ePointLight::ePointLight(GLFWwindow* w)
 {
     mMesh = new Mesh(_P("pointLight.obj"));
     mProgram = ShaderProgram::QuickLoad(_P("pointLight.vert"), _P("pointLight.frag"));
-    mPosition = glh::vec3(3.0f, 3.0f, -3.0f);
+    mPosition = glh::vec3(2.0f, 2.0f, 1.2f);
 }
 
 ePointLight::~ePointLight()
@@ -27,11 +27,11 @@ void ePointLight::Update(double deltaTime)
     double move_distance = deltaTime * 4;
     if (glfwGetKey(mWindow, GLFW_KEY_A) == GLFW_PRESS)
     {
-        mPosition.x -= move_distance;
+        mPosition.x += move_distance;
     }
     if (glfwGetKey(mWindow, GLFW_KEY_D) == GLFW_PRESS)
     {
-        mPosition.x += move_distance;
+        mPosition.x -= move_distance;
     }
 
     if (glfwGetKey(mWindow, GLFW_KEY_W) == GLFW_PRESS)

@@ -37,14 +37,14 @@ void MainScene::Init()
 
     mPointLight = new ePointLight(mWindow);
 
-    gMesh = new Mesh(_P("teapot.obj"));
+    gMesh = new Mesh(_P("sphere.obj"));
     gMaterial = new eMaterial();
-    gMaterial->LoadTexture(_P("OM.bmp"));
+    gMaterial->LoadTexture(_P("tex1.bmp"));
     gMaterial->LoadShader(_P("phong.vert"), _P("phong.frag"));
     gMaterial->BindUniformValue("Ka", 0.2f);
-    gMaterial->BindUniformValue("Kd", 0.7f);
-    gMaterial->BindUniformValue("Ks", 0.4f);
-    gMaterial->BindUniformValue("Shininess", new eMaterialValueFloatSlider(4.0f, 0.1f, 20.0f, 5.0f, GLFW_KEY_1, GLFW_KEY_2));
+    gMaterial->BindUniformValue("Kd",new eMaterialValueFloatSlider(0.7f, 0.01f, 2.0f, 0.3f, GLFW_KEY_5, GLFW_KEY_6));
+    gMaterial->BindUniformValue("Ks", new eMaterialValueFloatSlider(1.0f, 0.01f, 2.0f, 0.3f, GLFW_KEY_3, GLFW_KEY_4));
+    gMaterial->BindUniformValue("Shininess", new eMaterialValueFloatSlider(2.5f, 0.1f, 20.0f, 2.0f, GLFW_KEY_1, GLFW_KEY_2));
 }
 
 void MainScene::Update()
