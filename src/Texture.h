@@ -71,6 +71,8 @@ public:
 
 private:
     GLuint mTextureId;
+
+    friend class Framebuffer;
 };
 
 NS_GLH_END

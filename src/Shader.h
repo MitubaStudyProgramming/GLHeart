@@ -21,7 +21,7 @@ public:
     void SourceFromFile(const GLchar* filePath);
     void Compile();
 
-    ShaderType GetShaderType() const;
+    ShaderType GetShaderType() const ;
     GLboolean IsShaderDeleted() const ;
     GLboolean IsShaderCompiledSuccessful() const ;
     GLint GetShaderSourceLength() const ;

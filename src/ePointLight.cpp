@@ -2,7 +2,7 @@
 #include "eCamera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-#define _P(_FILE_NAME_) "W:\\GLHeart\\resources\\" _FILE_NAME_
+#define _P(_FILE_NAME_) "W:\\GLHeart\\resources\\internal\\" _FILE_NAME_
 
 using namespace glh;
 

@@ -32,17 +32,17 @@ void Texture::LoadFile(const GLchar *filePath)
     FILE * file = fopen(filePath, "rb");
     if (!file)
     {
-        printf("Image could not be opened\n");
+        printf("Image could not be opened. (%s)\n", filePath);
         return;
     }
 
     if ( fread(header, 1, 54, file)!=54 ){ // If not 54 bytes read : problem
-        printf("Not a correct BMP file\n");
+        printf("Not a correct BMP file. (%s)\n", filePath);
         return;
     }
 
     if ( header[0]!='B' || header[1]!='M' ){
-        printf("Not a correct BMP file\n");
+        printf("Not a correct BMP file. (%s)\n", filePath);
         return;
     }
 

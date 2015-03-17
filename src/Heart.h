@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Buffer.h"
+#include "Framebuffer.h"
 #include "Math.h"
 #include "Mesh.h"
 #include "Misc.h"

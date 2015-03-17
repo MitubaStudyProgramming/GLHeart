@@ -29,7 +29,7 @@ void Shader::SourceFromFile(const GLchar *filePath) {
     }
     else
     {
-        printf("Image could not be opened\n");
+        printf("Shader file could not be opened (%s)\n", filePath);
         return;
     }
 

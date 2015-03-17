@@ -15,5 +15,5 @@ add_definitions(-DGLEW_STATIC)
 file(GLOB SOURCE_FILES "${SOURCE_DIR}/*.h" "${SOURCE_DIR}/*.cpp")
 file(COPY resources DESTINATION ${PROJECT_BINARY_DIR})
 
-add_executable(GLHeart external/glew/src/glew.c ${SOURCE_FILES})
+add_executable(GLHeart external/glew/src/glew.c ${SOURCE_FILES} src/ePostprocessEffect.cpp src/ePostprocessEffect.h)
 target_link_libraries(GLHeart glfw ${GLFW_LIBRARIES})

@@ -23,6 +23,28 @@ Mesh::Mesh(const char *filePath)
     Load(filePath);
 }
 
+Mesh::Mesh(std::vector<vec3>& vertices, std::vector<vec2>& uvs, std::vector<vec3>& normals, std::vector<GLuint>& indices)
+{
+    mPositionBuffer = new Buffer();
+    mUVBuffer = new Buffer();
+    mNormalBuffer = new Buffer();
+    mIndexBuffer = new Buffer();
+
+    mIndexCount = indices.size();
+
+    mPositionBuffer->Bind(Buffer::ARRAY_BUFFER);
+    mPositionBuffer->Data(Buffer::ARRAY_BUFFER, vertices.size() * sizeof(vec3), &vertices[0], STATIC_DRAW);
+
+    mUVBuffer->Bind(Buffer::ARRAY_BUFFER);
+    mUVBuffer->Data(Buffer::ARRAY_BUFFER, uvs.size() * sizeof(vec3), &uvs[0], STATIC_DRAW);
+
+    mNormalBuffer->Bind(Buffer::ARRAY_BUFFER);
+    mNormalBuffer->Data(Buffer::ARRAY_BUFFER, normals.size() * sizeof(vec3), &normals[0], STATIC_DRAW);
+
+    mIndexBuffer->Bind(Buffer::ELEMENT_ARRAY_BUFFER);
+    mIndexBuffer->Data(Buffer::ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], STATIC_DRAW);
+}
+
 void Mesh::Draw()
 {
     mPositionBuffer->Bind(Buffer::ARRAY_BUFFER);

@@ -62,6 +62,7 @@ typedef glm::mat4 mat4;
 typedef glm::quat quat;
 
 class Buffer;
+class Framebuffer;
 class Mesh;
 class Shader;
 class ShaderProgram;

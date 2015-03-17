@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ePredefine.h"
+#include <functional>
+#include <algorithm>
 
 class eMaterialValue;
 
@@ -19,6 +21,14 @@ public:
     void LoadTexture(const char* filePath);
 
     void Active();
+
+    glh::Texture* GetTexture() const {
+        return mTexture;
+    }
+
+    glh::ShaderProgram* GetProgram() const {
+        return mProgram;
+    }
 
 private:
     glh::ShaderProgram* mProgram;
