@@ -13,5 +13,4 @@ public:
 
 private:
     eCamera* mCamera;
-    ePointLight* mPointLight;
 };

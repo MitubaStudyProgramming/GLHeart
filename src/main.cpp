@@ -2,6 +2,7 @@
 #include <gl/glew.h>
 #include <glfw/glfw3.h>
 #include "sceneTeapot.h"
+#include "sceneShadowMap.h"
 
 using namespace std;
 
@@ -26,7 +27,8 @@ int main()
 
     glewInit();
 
-    sceneTeapot scene;
+    //sceneTeapot scene;
+    sceneShadowMap scene;
 
     scene.SetWindow(window);
     scene.Init();
