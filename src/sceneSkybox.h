@@ -5,9 +5,17 @@
 #ifndef GLHEART_SCENESKYBOX_H
 #define GLHEART_SCENESKYBOX_H
 
+#include "sceneBase.h"
 
-class sceneSkybox {
+class sceneSkybox : public sceneBase
+{
+public:
+    virtual void Init();
+    virtual void Update();
+    virtual void Draw();
 
+private:
+    eCamera* mCamera;
 };
 
 
