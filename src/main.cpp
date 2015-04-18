@@ -1,7 +1,7 @@
 #include <iostream>
 #include <gl/glew.h>
 #include <glfw/glfw3.h>
-#include "mainScene.h"
+#include "sceneTeapot.h"
 
 using namespace std;
 
@@ -26,7 +26,9 @@ int main()
 
     glewInit();
 
-    MainScene scene(window);
+    sceneTeapot scene;
+
+    scene.SetWindow(window);
     scene.Init();
 
     while( !glfwWindowShouldClose( window ) )

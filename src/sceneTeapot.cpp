@@ -1,22 +1,5 @@
-#include "mainScene.h"
-#include <iostream>
-#include <glm/gtc/matrix_transform.hpp>
-
-#include "eCamera.h"
-#include "ePointLight.h"
-#include "eTime.h"
-#include "eMaterial.h"
-#include "eMaterialValue.h"
-#include "ePostprocessEffect.h"
-
-#define _P(_FILE_NAME_) "W:\\GLHeart\\resources\\" _FILE_NAME_
-#define _MESH(_NAME_) _P("mesh\\" _NAME_ ".obj")
-#define _TEX(_NAME_) _P("tex\\" _NAME_ ".bmp")
-#define _SHADER(_NAME_) _P("shader\\" _NAME_ ".vert"), _P("shader\\" _NAME_ ".frag")
-
-using namespace glh;
-using std::cout;
-using std::endl;
+#include "sceneTeapot.h"
+#include "sceneBasePreincludes.h"
 
 Mesh* gMesh = NULL;
 eMaterial* gMaterial = NULL;
@@ -30,15 +13,16 @@ ePostprocessEffect* gPostprocessEffect = NULL;
 GLuint gFBO = 0;
 GLuint m_shadowMap = 0;
 
-MainScene::MainScene(GLFWwindow *window)
-    :mWindow(window)
-    ,mCamera(new eCamera(window))
+sceneTeapot::sceneTeapot()
+    :mCamera(NULL)
     ,mPointLight(NULL)
 {
 }
 
-void MainScene::Init()
+void sceneTeapot::Init()
 {
+    mCamera = new eCamera(mWindow);
+
     Misc::SetClearColorValue(0.0f, 0.5f, 0.5f, 1.0f);
     RenderStates::Depth::SetEnable(GL_TRUE);
 
@@ -94,7 +78,7 @@ void MainScene::Init()
     gPostprocessEffect->Load(_P("shader\\shadow_map.frag"));
 }
 
-void MainScene::Update()
+void sceneTeapot::Update()
 {
     eTime::Update();
     double deltaTime = eTime::GetDeltaTime();
@@ -104,7 +88,7 @@ void MainScene::Update()
     mPointLight->Update(deltaTime);
 }
 
-void MainScene::Draw() {
+void sceneTeapot::Draw() {
     // shadow map pass
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gFBO);
     Misc::Clear((ClearBit)(CLEAR_DEPTH));
