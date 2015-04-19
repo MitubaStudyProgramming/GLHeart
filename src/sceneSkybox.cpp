@@ -4,12 +4,15 @@
 
 #include "sceneSkybox.h"
 #include "sceneBasePreincludes.h"
+#include "eCubemapTexture.h"
+
+#define _CUBEMAP(_NAME_) _TEX(_NAME_ "_1"), _TEX(_NAME_ "_2"), _TEX(_NAME_ "_3"), _TEX(_NAME_ "_4"), _TEX(_NAME_ "_5"), _TEX(_NAME_ "_6")
 
 static Mesh* gMesh = NULL;
 static eMaterial* gMaterial = NULL;
-
-static Mesh* gPlaneMesh = NULL;
-static eMaterial* gPlaneMaterial = NULL;
+static Mesh* sSkyboxMesh = NULL;
+static ShaderProgram* sSkyboxProgram = NULL;
+static eCubemapTexture* sCubemapTexture = NULL;
 static ePointLight* sPointLight;
 
 static eCamera* mCamera;
@@ -38,10 +41,12 @@ void sceneSkybox::Init() {
     gMaterial->BindUniformValue("Ks", new eMaterialValueFloatSlider(1.0f, 0.01f, 2.0f, 0.3f, GLFW_KEY_3, GLFW_KEY_4));
     gMaterial->BindUniformValue("Shininess", new eMaterialValueFloatSlider(2.5f, 0.1f, 20.0f, 2.0f, GLFW_KEY_1, GLFW_KEY_2));
 
-    gPlaneMesh = new Mesh(_MESH("plane"));
-    gPlaneMaterial = new eMaterial();
-    gPlaneMaterial->LoadTexture(_TEX("diffuse_2"));
-    gPlaneMaterial->LoadShader(_SHADER("simple"));
+    // skybox begin
+    sSkyboxMesh = new Mesh(_MESH("cube"));
+    sSkyboxProgram = ShaderProgram::QuickLoad(_SHADER("skybox"));
+    sCubemapTexture = new eCubemapTexture();
+    sCubemapTexture->Load(_CUBEMAP("snow"));
+    // skybox end
 }
 
 void sceneSkybox::Update() {
@@ -73,11 +78,29 @@ void sceneSkybox::Draw() {
 
     gMesh->Draw();
 
-    gPlaneMaterial->Active();
-    gPlaneMaterial->GetUniform("uWorldMatrix")->SetValue(glm::translate(mat4(), vec3(0, -1, 0)));
-    gPlaneMaterial->GetUniform("uViewMatrix")->SetValue(eCamera::GetCurrentCamera()->GetViewMatrix());
-    gPlaneMaterial->GetUniform("uProjectionMatrix")->SetValue(eCamera::GetCurrentCamera()->GetProjectionMatrix());
-    gPlaneMesh->Draw();
+    // skybox begin
+    GLint OldCullFaceMode;
+    glGetIntegerv(GL_CULL_FACE_MODE, &OldCullFaceMode);
+    GLint OldDepthFuncMode;
+    glGetIntegerv(GL_DEPTH_FUNC, &OldDepthFuncMode);
+
+    glCullFace(GL_FRONT);
+    glDepthFunc(GL_LEQUAL);
+
+    mat4 _1p = eCamera::GetCurrentCamera()->GetProjectionMatrix();
+    mat4 _1v = eCamera::GetCurrentCamera()->GetViewMatrix();
+    mat4 _1w = glm::translate(mat4(), eCamera::GetCurrentCamera()->GetPosition()) ;
+    sSkyboxProgram->Use();
+    sSkyboxProgram->GetUniform("uWVP")->SetValue(_1p * _1v * _1w);
+
+    Texture::Active(Texture::TEXTURE0);
+    sCubemapTexture->Bind();
+
+    sSkyboxMesh->Draw();
+
+    glCullFace(OldCullFaceMode);
+    glDepthFunc(OldDepthFuncMode);
+    // skybox end
 
     eCamera::End();
 }
